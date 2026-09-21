@@ -1,58 +1,65 @@
-# Career Evidence Agent
+<div align="center">
 
-[![API Contract Tests](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml/badge.svg)](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml)
+# 🧭 Career Evidence Agent
 
-An evidence-grounded career assistant that turns reviewed project and research
-records into cited answers. The public API is designed for recruiter-facing
-questions; the same backend also contains controlled workflows for JD matching
-and interview preparation without shipping any real private evidence in this
-repository.
+**Evidence-grounded career Q&A · cited answers · controlled private workflows**
 
-## What this demonstrates
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](apps/api/pyproject.toml)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](apps/api/)
+[![PostgreSQL](https://img.shields.io/badge/Search-PostgreSQL%20%2B%20pgvector-4169E1?logo=postgresql&logoColor=white)](infra/)
+[![LangGraph](https://img.shields.io/badge/Workflows-LangGraph-6C4CE4)](apps/api/src/career_agent/workflows/)
+[![API tests](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml/badge.svg)](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml)
 
-- **Evidence-first RAG** — facts are modelled as reviewed Evidence, Claim and
-  Source records rather than treating arbitrary documents as truth.
-- **Hybrid retrieval** — BM25-style sparse retrieval and pgvector dense search
-  are combined with reciprocal-rank fusion.
-- **Citation validation** — every factual answer statement must cite an allowed,
-  retrieved claim before it can be returned.
-- **Public/private boundaries** — the same policy is applied during retrieval,
-  tool access, citation checking and output validation.
-- **LangGraph workflows** — structured JD matching, mock-interview planning and
-  evidence-aware answer feedback are implemented as bounded workflows.
-- **Evaluation harness** — retrieval baselines, safety cases, policy tests and
-  run manifests make failures inspectable and repeatable.
+</div>
+
+A career assistant that answers questions about my research and projects **from reviewed evidence, with source citations**. The public Q&A path is designed for a portfolio; separate, controlled workflows support job-description matching and interview practice without publishing private career records.
+
+## How public Q&A works
 
 ```mermaid
 flowchart LR
-    Q[Question] --> P[Policy scope]
-    P --> R[BM25 + pgvector]
-    R --> F[RRF fusion]
-    F --> G[Structured generation]
-    G --> C[Citation gate]
-    C -->|valid| A[Cited answer]
-    C -->|unsupported| X[Refuse or request evidence]
-    C --> M[Run manifest]
+    A[Reviewed public evidence] --> B[(PostgreSQL + pgvector)]
+    Q[Question] --> P[Scope policy]
+    P --> S[BM25 + dense retrieval]
+    B --> S
+    S --> F[RRF fusion]
+    F --> G[Structured answer]
+    G --> C{Citation gate}
+    C -->|Supported| Y[Cited answer]
+    C -->|Missing or out of scope| N[Decline or ask for evidence]
+    C --> M[Minimal run manifest]
 ```
+
+The system does not treat an arbitrary document as a fact. Evidence, claims, and sources have explicit review states; retrieval and answer generation use only the claims allowed for the current scope.
+
+## What is implemented
+
+| Area | Engineering work |
+| --- | --- |
+| Evidence registry | Typed Evidence / Claim / Source records, review decisions, canonical import, and public-only seeding. |
+| Hybrid retrieval | BM25-style sparse search plus pgvector embeddings, combined with reciprocal-rank fusion (RRF). |
+| Answer harness | Structured statements, allowed-source checks, citation validation, and refusal when support is missing. |
+| Private workflows | Bounded LangGraph flows for JD matching, interview questions, and evidence-aware feedback; tests use synthetic inputs. |
+| Evaluation | Retrieval baselines, public-answer safety cases, policy tests, and inspectable run manifests. |
+
+No benchmark score or production availability is claimed here: this repository is an engineering snapshot, not a hosted multi-user service.
 
 ## Repository layout
 
 ```text
-apps/api/                  FastAPI application, retrieval, Harness and workflows
-evidence/registry/approved Public, reviewed canonical evidence
-evidence/reviews/          Public-safe human review decisions
-evals/                     Public retrieval and answer-safety cases
-infra/                     Local PostgreSQL + pgvector configuration
-docs/                      Public deployment boundary
+apps/api/                   FastAPI routes, retrieval, answer harness, workflows, tests
+evidence/registry/approved/ Reviewed public evidence cards
+evidence/reviews/           Public-safe review decisions
+evals/                      Retrieval and answer-safety cases
+infra/                      Local PostgreSQL + pgvector configuration
+docs/                       Public deployment boundary
 ```
 
-Real private evidence, source documents, JD inputs, interview answers and
-private evaluation outputs are intentionally excluded. Tests for private
-workflow behaviour use synthetic fixtures only.
+Real private evidence, source documents, job descriptions, interview answers, and private evaluation outputs are **not included** in this public repository. Private HTTP routes are disabled unless local owner configuration is explicitly supplied; that local token is not a production authentication system.
 
-## Run the test suite
+## Run the tests
 
-Python 3.11 or newer and [`uv`](https://docs.astral.sh/uv/) are recommended.
+Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/):
 
 ```bash
 cd apps/api
@@ -60,30 +67,8 @@ uv sync --extra dev
 uv run --extra dev pytest
 ```
 
-## Run the public API locally
+For local database setup, evidence import, and API endpoints, see the [API guide](apps/api/README.md). The [deployment boundary](docs/public-deployment.md) documents exactly what can and cannot be included in a public service.
 
-Start PostgreSQL with pgvector, apply migrations and seed only the public
-registry:
+## Current scope
 
-```bash
-cp infra/.env.example infra/.env
-docker compose --env-file infra/.env -f infra/compose.yaml up -d db
-
-cd apps/api
-uv run alembic upgrade head
-uv run python -m career_agent.evidence.import_canonical \
-  --database-url "$CAREER_AGENT_DATABASE_URL" \
-  --cards-dir ../../evidence/registry/approved
-uv run uvicorn career_agent.api.main:create_app --factory --reload
-```
-
-The main public endpoints are documented in [apps/api/README.md](apps/api/README.md).
-Cloud deployment boundaries are documented in
-[docs/public-deployment.md](docs/public-deployment.md).
-
-## Status
-
-This repository is a portfolio-ready engineering snapshot, not a hosted
-multi-user service. The public Q&A path, retrieval, citation gate, policies and
-workflow contracts are implemented; production authentication and a persistent
-private web session are outside this public release.
+The public API, hybrid retrieval, citation gate, policy checks, and workflow contracts are implemented. Production sign-in, persistent private web sessions, and a hosted public frontend are outside this release. A public deployment must seed only `evidence/registry/approved/` and protect paid answer requests with appropriate rate limits.
