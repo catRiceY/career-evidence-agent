@@ -1,5 +1,7 @@
 # Career Evidence Agent
 
+[![API Contract Tests](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml/badge.svg)](https://github.com/catRiceY/career-evidence-agent/actions/workflows/api-tests.yml)
+
 An evidence-grounded career assistant that turns reviewed project and research
 records into cited answers. The public API is designed for recruiter-facing
 questions; the same backend also contains controlled workflows for JD matching
@@ -85,4 +87,3 @@ This repository is a portfolio-ready engineering snapshot, not a hosted
 multi-user service. The public Q&A path, retrieval, citation gate, policies and
 workflow contracts are implemented; production authentication and a persistent
 private web session are outside this public release.
-
