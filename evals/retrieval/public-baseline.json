@@ -1,0 +1,26 @@
+[
+  {
+    "id": "RET-PUB-001",
+    "query": "ConnectOnion Studio 的 Agent 管理、WebSocket 和 QR 连接",
+    "expected_claim_ids": ["studio_01", "studio_04"],
+    "k": 5
+  },
+  {
+    "id": "RET-PUB-002",
+    "query": "ConnectOnion iOS 的 WebSocket 和 Ed25519 协议",
+    "expected_claim_ids": ["ios_05"],
+    "k": 5
+  },
+  {
+    "id": "RET-PUB-003",
+    "query": "CoRA NAS 1% 训练预算和排序",
+    "expected_claim_ids": ["cora_03"],
+    "k": 5
+  },
+  {
+    "id": "RET-PUB-004",
+    "query": "RiPPLE 的 CVPR 2027 计划和当前投稿状态",
+    "expected_claim_ids": ["ripple_04"],
+    "k": 5
+  }
+]

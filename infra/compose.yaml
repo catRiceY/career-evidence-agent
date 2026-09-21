@@ -1,0 +1,47 @@
+services:
+  postgres:
+    # Pin the official pgvector image so local development has the `vector`
+    # extension available. Registry facts still live in ordinary PostgreSQL
+    # tables; vectors are derived and rebuildable.
+    image: pgvector/pgvector:0.8.6-pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-career_evidence}
+      POSTGRES_USER: ${POSTGRES_USER:-career_agent}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in infra/.env}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-54329}:5432"
+    volumes:
+      - career_evidence_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  n8n:
+    # Optional local workflow editor. It is intentionally not started by a
+    # normal `docker compose up`; use `--profile automation` explicitly.
+    image: n8nio/n8n:1.123.81
+    profiles: ["automation"]
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      # Keep automation optional: missing values must not block PostgreSQL's
+      # normal compose lifecycle. A workflow cannot be activated safely until
+      # the operator supplies non-empty values in infra/.env.
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_GIT_NODE_DISABLE_BARE_REPOS: "true"
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      DB_SQLITE_POOL_SIZE: "2"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      CAREER_AGENT_PRIVATE_API_URL: ${CAREER_AGENT_PRIVATE_API_URL:-http://host.docker.internal:8000}
+      CAREER_AGENT_OWNER_TOKEN: ${CAREER_AGENT_OWNER_TOKEN:-}
+    volumes:
+      - career_evidence_n8n_data:/home/node/.n8n
+
+volumes:
+  career_evidence_postgres_data:
+  career_evidence_n8n_data:
