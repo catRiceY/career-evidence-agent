@@ -1,0 +1,68 @@
+{
+  "id": "profile_identity",
+  "version": "1.0",
+  "type": "system_module",
+  "title": "Profile identity",
+  "summary": "Public identity facts for the portfolio owner, used to answer name, alias, and site-owner questions without guessing.",
+  "review_status": "approved",
+  "answer_visibility": "public",
+  "source_visibility_default": "public",
+  "personal_contribution_status": "not_applicable",
+  "role": "Portfolio owner identity facts",
+  "tech_stack": [],
+  "target_tracks": [],
+  "priority_by_track": {},
+  "status_notes": ["This card exists only to resolve public identity and alias questions."],
+  "risks": ["Do not infer private biographical details beyond the approved public identity facts."],
+  "next_evidence_to_add": ["Public profile page URL if a dedicated profile/about page is added."],
+  "sources": [
+    {
+      "id": "source_profile_site_owner",
+      "evidence_id": "profile_identity",
+      "type": "public_site",
+      "title": "Yifan Yang public portfolio",
+      "url_or_path": "https://catricey.github.io/",
+      "source_visibility": "public",
+      "allowed_quote_scope": "short_summary",
+      "locator": "site title, profile header, and portfolio identity",
+      "notes": "Public portfolio identifies Yifan Yang as the site owner; project evidence cards also use Yifan Yang（Evan） for public contribution claims."
+    }
+  ],
+  "claims": [
+    {
+      "id": "identity_01",
+      "evidence_id": "profile_identity",
+      "text": "Yifan Yang 是该公开个人学术/项目网站的作者和所有者；Evan 是 Yifan Yang 在项目语境中使用的英文名/别名。",
+      "claim_type": "policy_boundary",
+      "review_status": "approved",
+      "answer_visibility": "public",
+      "personal_contribution_status": "not_applicable",
+      "evidence_strength": "strong",
+      "source_ids": ["source_profile_site_owner"],
+      "locators": [{"source_id": "source_profile_site_owner", "locator": "site title, profile header, and approved project cards"}],
+      "hr_value": "帮助招聘者和访客理解 Evan、Yifan、Yifan Yang 指向同一位网站作者。",
+      "risk_or_limit": "仅确认公开姓名/别名关系；不提供私人身份信息。",
+      "target_tracks": [],
+      "created_from": "manual",
+      "updated_at": "2026-09-22"
+    },
+    {
+      "id": "identity_02",
+      "evidence_id": "profile_identity",
+      "text": "在公开问答中，问题里的 “you”, “your”, “你”, “你的”, “Evan”, “Yifan” 和 “Yifan Yang” 均应理解为网站作者 Yifan Yang（Evan），而不是问答助手本身。",
+      "claim_type": "policy_boundary",
+      "review_status": "approved",
+      "answer_visibility": "public",
+      "personal_contribution_status": "not_applicable",
+      "evidence_strength": "strong",
+      "source_ids": ["source_profile_site_owner"],
+      "locators": [{"source_id": "source_profile_site_owner", "locator": "portfolio Q&A identity boundary"}],
+      "hr_value": "减少招聘者自然提问时的指代歧义。",
+      "risk_or_limit": "仍只能回答 approved public evidence 覆盖的问题。",
+      "target_tracks": [],
+      "created_from": "manual",
+      "updated_at": "2026-09-22"
+    }
+  ],
+  "updated_at": "2026-09-22"
+}

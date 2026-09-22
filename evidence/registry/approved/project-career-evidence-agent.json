@@ -43,7 +43,7 @@
     {
       "id": "career_agent_01",
       "evidence_id": "project_career_evidence_agent",
-      "text": "Career Evidence Agent 是一个 evidence-grounded career assistant，用已审核的项目和研究记录回答招聘者问题，并为回答附上来源。",
+      "text": "Career Evidence Agent 是 Yifan Yang（Evan）的 Agent/RAG 相关项目：一个 evidence-grounded career assistant，用已审核的项目和研究记录回答招聘者问题，并为回答附上来源。",
       "claim_type": "project_feature",
       "review_status": "approved",
       "answer_visibility": "public",
