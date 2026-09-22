@@ -20,12 +20,12 @@ def test_public_deployment_seed_is_idempotent_and_public_only(tmp_path: Path) ->
             session, REPO_ROOT / "evidence" / "registry" / "approved"
         )
         session.commit()
-        assert (imported, skipped) == (4, 0)
+        assert (imported, skipped) == (5, 0)
 
         imported, skipped = seed_public_deployment(
             session, REPO_ROOT / "evidence" / "registry" / "approved"
         )
-        assert (imported, skipped) == (0, 4)
+        assert (imported, skipped) == (0, 5)
         cards = session.scalars(select(EvidenceCardRecord)).all()
 
     assert cards

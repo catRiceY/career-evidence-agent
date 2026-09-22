@@ -42,11 +42,17 @@ def create_app(
         version="0.1.0",
         description="Evidence-first API for the public Career Evidence Agent.",
     )
-    allowed_origins = [
+    default_allowed_origins = {
+        "https://catricey.github.io",
+        "http://127.0.0.1:4173",
+        "http://localhost:4173",
+    }
+    configured_allowed_origins = {
         item.strip()
         for item in os.getenv("CAREER_AGENT_PUBLIC_CORS_ORIGINS", "").split(",")
         if item.strip()
-    ]
+    }
+    allowed_origins = sorted(default_allowed_origins | configured_allowed_origins)
     if allowed_origins:
         # Browsers may call only explicitly configured portfolio origins. This
         # is not authentication, but prevents accidentally granting every web

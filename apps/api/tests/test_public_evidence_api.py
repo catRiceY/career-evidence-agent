@@ -63,6 +63,7 @@ def test_public_api_filters_by_approval_visibility_and_track(tmp_path: Path) -> 
     assert response.status_code == 200
     payload = response.json()
     assert {item["id"] for item in payload} == {
+        "project_career_evidence_agent",
         "project_connectonion_ios",
         "project_connectonion_studio",
     }

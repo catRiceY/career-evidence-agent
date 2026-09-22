@@ -13,7 +13,7 @@
   "target_tracks": ["agent_rag_ai_app", "backend_fullstack"],
   "priority_by_track": {"agent_rag_ai_app": "high", "backend_fullstack": "high"},
   "status_notes": ["公开项目；仅使用已审核的模块级描述"],
-  "risks": ["不输出 identity、key、用户本地 workspace 内容或局域网地址", "不把团队项目或其他 ConnectOnion 模块泛化为 Evan 独立完成"],
+  "risks": ["不输出 identity、key、用户本地 workspace 内容或局域网地址", "不把团队项目或其他 ConnectOnion 模块泛化为 Yifan Yang 独立完成"],
   "next_evidence_to_add": ["模块级代码定位", "公开截图、demo GIF 或架构图"],
   "sources": [
     {
@@ -31,7 +31,7 @@
       "id": "source_studio_public_review",
       "evidence_id": "project_connectonion_studio",
       "type": "manual_note",
-      "title": "Evan-approved public contribution summary for ConnectOnion Studio",
+      "title": "Yifan Yang-approved public contribution summary for ConnectOnion Studio",
       "url_or_path": "evidence/reviews/connectonion-studio.md",
       "source_visibility": "public",
       "allowed_quote_scope": "short_summary",
@@ -52,7 +52,7 @@
       "source_ids": ["source_studio_public_repo"],
       "locators": [{"source_id": "source_studio_public_repo", "locator": "README and public repository metadata"}],
       "hr_value": "说明 Agent tooling 的真实产品形态。",
-      "risk_or_limit": "项目事实不自动等同于 Evan 独立完成。",
+      "risk_or_limit": "项目事实不自动等同于 Yifan Yang 独立完成。",
       "target_tracks": ["agent_rag_ai_app", "backend_fullstack"],
       "created_from": "github",
       "updated_at": "2026-09-18"
@@ -60,7 +60,7 @@
     {
       "id": "studio_02",
       "evidence_id": "project_connectonion_studio",
-      "text": "Evan 将 ConnectOnion 的命令式 Agent 管理能力产品化为 Studio 的可视化工作流，并实现每个 Agent 的隔离工作区。",
+      "text": "Yifan Yang（Evan）将 ConnectOnion 的命令式 Agent 管理能力产品化为 Studio 的可视化工作流，并实现每个 Agent 的隔离工作区。",
       "claim_type": "personal_contribution",
       "review_status": "approved",
       "answer_visibility": "public",
@@ -69,7 +69,7 @@
       "source_ids": ["source_studio_public_review"],
       "locators": [{"source_id": "source_studio_public_review", "locator": "CO-02"}],
       "hr_value": "证明能将 Agent runtime 能力转为可操作产品体验。",
-      "risk_or_limit": "不扩展为所有 ConnectOnion 系统模块均由 Evan 完成。",
+      "risk_or_limit": "不扩展为所有 ConnectOnion 系统模块均由 Yifan Yang 完成。",
       "target_tracks": ["agent_rag_ai_app", "backend_fullstack"],
       "created_from": "manual",
       "updated_at": "2026-09-18"
@@ -77,7 +77,7 @@
     {
       "id": "studio_03",
       "evidence_id": "project_connectonion_studio",
-      "text": "Evan 负责 Studio 的 skills market、安装工作流、per-agent skill 配置与相应 API。",
+      "text": "Yifan Yang（Evan）负责 Studio 的 skills market、安装工作流、per-agent skill 配置与相应 API。",
       "claim_type": "personal_contribution",
       "review_status": "approved",
       "answer_visibility": "public",
@@ -94,7 +94,7 @@
     {
       "id": "studio_04",
       "evidence_id": "project_connectonion_studio",
-      "text": "Evan 负责 Studio 的 FastAPI、WebSocket、QR 连接、macOS 壳与 Agent lifecycle 管理模块。",
+      "text": "Yifan Yang（Evan）负责 Studio 的 FastAPI、WebSocket、QR 连接、macOS 壳与 Agent lifecycle 管理模块。",
       "claim_type": "personal_contribution",
       "review_status": "approved",
       "answer_visibility": "public",
@@ -111,7 +111,7 @@
     {
       "id": "studio_05",
       "evidence_id": "project_connectonion_studio",
-      "text": "Evan 修复了 invite-code 验证中的 YAML 类型转换问题：数值或 YAML 关键字可被解析为非字符串，而移动端提交字符串，导致等值邀请码无法匹配。",
+      "text": "Yifan Yang（Evan）修复了 invite-code 验证中的 YAML 类型转换问题：数值或 YAML 关键字可被解析为非字符串，而移动端提交字符串，导致等值邀请码无法匹配。",
       "claim_type": "personal_contribution",
       "review_status": "approved",
       "answer_visibility": "public",

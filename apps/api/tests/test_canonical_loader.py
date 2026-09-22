@@ -23,6 +23,7 @@ def test_approved_nas_cards_are_public_and_schema_valid() -> None:
     assert [card.id for card in cards] == [
         "paper_cora_nas",
         "paper_ripple",
+        "project_career_evidence_agent",
         "project_connectonion_ios",
         "project_connectonion_studio",
     ]
@@ -45,14 +46,15 @@ def test_approved_nas_cards_import_as_linked_registry_records() -> None:
             import_new_evidence_card(session, load_canonical_evidence_card(path))
         session.commit()
 
-        assert session.query(EvidenceCardRecord).count() == 4
-        assert session.query(SourceRecord).count() == 6
-        assert session.query(ClaimRecord).count() == 20
+        assert session.query(EvidenceCardRecord).count() == 5
+        assert session.query(SourceRecord).count() == 8
+        assert session.query(ClaimRecord).count() == 26
         assert {
             card.id for card in session.query(EvidenceCardRecord).all()
         } == {
             "paper_cora_nas",
             "paper_ripple",
+            "project_career_evidence_agent",
             "project_connectonion_ios",
             "project_connectonion_studio",
         }

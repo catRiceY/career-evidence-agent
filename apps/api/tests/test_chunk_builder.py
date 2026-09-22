@@ -40,12 +40,12 @@ def test_chunk_builder_uses_only_approved_public_claim_source_pairs(tmp_path: Pa
         session.commit()
         chunks = session.scalars(select(EvidenceChunkRecord)).all()
 
-        assert built == len(chunks) == 20
+        assert built == len(chunks) == 28
         assert {chunk.chunk_strategy for chunk in chunks} == {CHUNK_STRATEGY}
         assert {chunk.index_visibility for chunk in chunks} == {"public"}
         assert all("private" not in chunk.id for chunk in chunks)
         assert all(len(chunk.content_hash) == 64 for chunk in chunks)
 
-        assert rebuild_public_claim_chunks(session) == 20
+        assert rebuild_public_claim_chunks(session) == 28
         session.commit()
         assert session.scalars(select(EvidenceChunkRecord)).all()
