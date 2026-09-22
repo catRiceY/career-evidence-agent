@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from datetime import date, datetime
 
 from sqlalchemy.orm import Session
 
@@ -11,10 +12,118 @@ from career_agent.db.models import EvidenceCardRecord
 from career_agent.db.session import create_database_engine
 from career_agent.evidence.canonical_loader import load_canonical_evidence_card
 from career_agent.evidence.registry_import import import_new_evidence_card
+from career_agent.evidence.schemas import EvidenceCard
+
+
+def _date_key(value: date | datetime | None) -> str | None:
+    if value is None:
+        return None
+    return value.date().isoformat() if isinstance(value, datetime) else value.isoformat()
+
+
+def _claim_locators(source_ids: list[str], locators: dict[str, str | None]) -> dict[str, str | None]:
+    return {source_id: locators.get(source_id) for source_id in sorted(source_ids)}
+
+
+def _record_matches_card(record: EvidenceCardRecord, card: EvidenceCard) -> bool:
+    """Return whether the deployed record already mirrors the reviewed card."""
+
+    if (
+        record.version != card.version
+        or record.type != card.type
+        or record.title != card.title
+        or record.period != card.period
+        or record.summary != card.summary
+        or record.review_status != card.review_status
+        or record.answer_visibility != card.answer_visibility
+        or record.source_visibility_default != card.source_visibility_default
+        or record.personal_contribution_status != card.personal_contribution_status
+        or record.role != card.role
+        or record.tech_stack != card.tech_stack
+        or record.target_tracks != card.target_tracks
+        or record.priority_by_track != card.priority_by_track
+        or record.status_notes != card.status_notes
+        or record.risks != card.risks
+        or record.next_evidence_to_add != card.next_evidence_to_add
+        or record.paper_metadata != (card.paper.model_dump(mode="json") if card.paper else None)
+    ):
+        return False
+
+    source_payload = {
+        source.id: {
+            "type": source.type,
+            "title": source.title,
+            "url_or_path": source.url_or_path,
+            "source_visibility": source.source_visibility,
+            "allowed_quote_scope": source.allowed_quote_scope,
+            "locator": source.locator,
+            "version_ref": source.version_ref,
+            "captured_at": _date_key(source.captured_at),
+            "notes": source.notes,
+        }
+        for source in card.sources
+    }
+    record_sources = {
+        source.id: {
+            "type": source.type,
+            "title": source.title,
+            "url_or_path": source.url_or_path,
+            "source_visibility": source.source_visibility,
+            "allowed_quote_scope": source.allowed_quote_scope,
+            "locator": source.locator,
+            "version_ref": source.version_ref,
+            "captured_at": _date_key(source.captured_at),
+            "notes": source.notes,
+        }
+        for source in record.sources
+    }
+    if record_sources != source_payload:
+        return False
+
+    claim_payload = {
+        claim.id: {
+            "text": claim.text,
+            "claim_type": claim.claim_type,
+            "review_status": claim.review_status,
+            "answer_visibility": claim.answer_visibility,
+            "personal_contribution_status": claim.personal_contribution_status,
+            "evidence_strength": claim.evidence_strength,
+            "hr_value": claim.hr_value,
+            "risk_or_limit": claim.risk_or_limit,
+            "target_tracks": claim.target_tracks,
+            "created_from": claim.created_from,
+            "source_ids": sorted(claim.source_ids),
+            "locators": _claim_locators(
+                claim.source_ids, {item.source_id: item.locator for item in claim.locators}
+            ),
+        }
+        for claim in card.claims
+    }
+    record_claims = {
+        claim.id: {
+            "text": claim.text,
+            "claim_type": claim.claim_type,
+            "review_status": claim.review_status,
+            "answer_visibility": claim.answer_visibility,
+            "personal_contribution_status": claim.personal_contribution_status,
+            "evidence_strength": claim.evidence_strength,
+            "hr_value": claim.hr_value,
+            "risk_or_limit": claim.risk_or_limit,
+            "target_tracks": claim.target_tracks,
+            "created_from": claim.created_from,
+            "source_ids": sorted(link.source_id for link in claim.source_links),
+            "locators": _claim_locators(
+                [link.source_id for link in claim.source_links],
+                {link.source_id: link.locator for link in claim.source_links},
+            ),
+        }
+        for claim in record.claims
+    }
+    return record_claims == claim_payload
 
 
 def seed_public_deployment(session: Session, cards_dir: Path) -> tuple[int, int]:
-    """Add missing approved/public cards and reject a divergent existing card."""
+    """Synchronize the deployment database with reviewed public evidence cards."""
 
     paths = sorted(cards_dir.glob("*.json"))
     if not paths:
@@ -32,13 +141,13 @@ def seed_public_deployment(session: Session, cards_dir: Path) -> tuple[int, int]
         if existing is None:
             import_new_evidence_card(session, card)
             imported += 1
-        elif existing.version == card.version:
+        elif _record_matches_card(existing, card):
             skipped += 1
         else:
-            raise ValueError(
-                f"deployment database has {card.id!r} at version {existing.version}; "
-                "manual reviewed migration required"
-            )
+            session.delete(existing)
+            session.flush()
+            import_new_evidence_card(session, card)
+            imported += 1
     return imported, skipped
 
 
